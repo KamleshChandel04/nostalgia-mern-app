@@ -1,77 +1,74 @@
 import React, { useState, useEffect } from "react";
 import { TextField, Button, Typography, Paper } from "@material-ui/core";
-import FileBase from "react-file-base64";
 import { useDispatch, useSelector } from "react-redux";
-
-import useStyles from "./styles";
+import FileBase from "react-file-base64";
 import { createPost, updatePost } from "../../actions/posts";
+import useStyles from "./styles";
+
 
 const Form = ({currentId, setCurrentId}) => {
     const [postData, setPostData] = useState({
-        creator: "",
         title: "",
         message: "",
-        tags: "",
+        tags: '',
         selectedFile: '',
     });
-    let post = useSelector((state) =>{
-       
-        return (currentId ? state.posts.find((message) => message._id === currentId) : null)});
+    let post = useSelector((state) =>{ return (currentId ? state.posts.find((message) => message._id === currentId) : null)});
 
-    
     const classes = useStyles();
-
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        if (post) setPostData(post);
-
-        
-    }, [post]);
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-        if (currentId) {
-            dispatch(updatePost(currentId, postData));
-            console.log("updated currentid");
-        } else {
-            dispatch(createPost(postData));
-            console.log("created  currentid");
-        }
-        clear();
-    };
+    const user = JSON.parse(localStorage.getItem('profile'));
+    
 
     const clear = () => {
-        setCurrentId(null);
+        setCurrentId(0);
         setPostData({
-            creator: "",
             title: "",
             message: "",
-            tags: "",
-            selectedFile: null,
+            tags: '',
+            selectedFile:'',
         });
         
     };
 
+    useEffect(() => {
+        if (post) setPostData(post);
+    }, [post]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+    
+        if (currentId === 0) {
+          dispatch(createPost({ ...postData, name: user?.result?.name } ));
+          clear();
+        } else {
+          dispatch(updatePost(currentId, { ...postData, name: user?.result?.name }));
+          clear();
+        }
+      };
+
+   
+
+    if (!user?.result?.name) {
+        return (
+          <Paper className={classes.paper} >
+            <Typography variant="h6" align="center">
+               Please Sign In to create your own memories and like other's memories.
+            </Typography>
+          </Paper>
+        );
+      }
+
     return (
-        <Paper className={classes.paper}>
+        <Paper className={classes.paper} >
             <form
                 autoComplete="off"
                 noValidate
                 className={`${classes.root} ${classes.form}`}
                 onSubmit={handleSubmit}>
-                <Typography variant="h6">{ currentId ? 'Editing' : 'Create'} a Memory</Typography>
-                <TextField
-                    name="creator"
-                    variant="outlined"
-                    label="Creator"
-                    fullWidth
-                    value={postData.creator}
-                    onChange={(e) =>
-                        setPostData({ ...postData, creator: e.target.value })
-                    }
-                />
+                <Typography variant="h6">{currentId ? `Editing "${post?.title}"` : 'Creating a Memory'}</Typography>
+
                 <TextField
                     name="title "
                     variant="outlined"
@@ -87,6 +84,8 @@ const Form = ({currentId, setCurrentId}) => {
                     variant="outlined"
                     label="Message"
                     fullWidth
+                    multiline 
+                    minRows={3}
                     value={postData.message}
                     onChange={(e) =>
                         setPostData({ ...postData, message: e.target.value })

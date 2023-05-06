@@ -5,6 +5,7 @@ import cors from "cors";
 import dotenv from 'dotenv';
 
 import postRoutes from "./routes/posts.js";
+import userRoutes from "./routes/user.js";
 
 
 const app = express();
@@ -15,10 +16,9 @@ app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
 
 app.use("/posts", postRoutes);
+app.use("/user" , userRoutes);
 
-app.get("/", (req, res) => {
-    res.send("Hello to Memories Application API");
-  });  
+
 
 
 const PORT = process.env.PORT;
@@ -32,3 +32,5 @@ mongoose
         app.listen(PORT, () => console.log(`Server Running On Port : ${PORT}`))
     )
     .catch((error) => console.log(`${error} did not connect`));
+
+    
