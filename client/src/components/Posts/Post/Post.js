@@ -26,13 +26,13 @@ const Post = ({ post, setCurrentId }) => {
     const user = JSON.parse(localStorage.getItem("profile"));
     
   const userId = user?.result?._id;
-    const hasLikedPost = likes.find((like) => like === userId);
+    const hasLikedPost = post.likes.find((like) => like === userId);
 
     const handleLike = async () => {
         dispatch(likePost(post._id));
     
         if (hasLikedPost) {
-          setLikes(likes.filter((id) => id !== userId));
+          setLikes(post.likes.filter((id) => id !== userId));
         } else {
           setLikes([...post.likes, userId]);
         }
@@ -42,7 +42,7 @@ const Post = ({ post, setCurrentId }) => {
 
    
       const Likes = () => {
-        if (likes.length > 0) {
+        if (likes?.length > 0) {
           return likes.find((like) => like === (user?.result?.googleId || user?.result?._id))
             ? (
               <><ThumbUpAltIcon fontSize="small" />&nbsp;{likes.length > 2 ? `You and ${likes.length - 1} others` : `${likes.length} like${likes.length > 1 ? 's' : ''}` }</>
