@@ -25,5 +25,5 @@ Nostalgia App  is a simple Social Media MERN (MongoDB, Express, React, Node.js) 
 2. **Clone the Repository:**
 
 ```bash
-git clone https://github.com/your-username/nostalgia-app-2023.git
+git clone https://github.com/KamleshChandel04/nostalgia-app-2023.git
 cd nostalgia-app-2023
